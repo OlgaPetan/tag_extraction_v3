@@ -34,10 +34,12 @@ Text:
 {input}
 """
 
-ag_extraction_template = """First: 1. Look for athletes names in the summary. These will be names of people that play in an event or a sport for their national teams. If you don't see an athlete name and there is only mention of the national team, please write: "No Athlete Mentioned".
+tag_extraction_template = """First: 1. Look for athletes names in the summary. These will be names of people that play in an event or a sport for their national teams. If you don't see an athlete name and there is only mention of the national team, please write: "No Athlete Mentioned".
 Then: 2. Look for the country that the athlete is playing for. Please only return countries that are participating in an event. When you find a country, output as noc the three-letter International Olympic Committe acronym for that country. If you don't see a country participating in an event, please write: "No NOC Participating".
 Next: 3: Look for any mention of mental health and synonyms. I would like one tag that is binary and another tag with the words mentioned. Example: mental_health_binary = 1, mental_health = anxiety.
 Finally: 4. Look for the discipline the athletes participate in. This is the most important tag.
+
+Next to each tag, please tell me how many times you saw that tag in the original article and not the summarization. For example, how many time was that NOC mentioned, how many times was that athlete mentioned, etc.
 
 Finally, please tell me why you chose thos specific tags.
 Passage:
