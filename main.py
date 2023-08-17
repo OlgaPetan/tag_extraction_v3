@@ -24,7 +24,7 @@ from langchain.schema.language_model import BaseLanguageModel
 
 openai_api_key = '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'
 
-summarization_template = """You will be provided with an article text. Your task is to summarize the article text.
+summarization_template = """You will be provided with an article text. Keep all athletes and names you find in the original article text.
 Text:
 {input}
 """
@@ -34,14 +34,24 @@ Text:
 {input}
 """
 
-tag_extraction_template = """First: 1. Look for athletes names in the summary. These will be names of people that play in an event or a sport for their national teams. If you don't see an athlete name and there is only mention of the national team, please write: "No Athlete Mentioned".
-Then: 2. Look for the country that the athlete is playing for. Please only return countries that are participating in an event. When you find a country, output as noc the three-letter International Olympic Committe acronym for that country. If you don't see a country participating in an event, please write: "No NOC Participating".
+tag_extraction_template = """First: 1. Look for athletes names in the summary. These will be names of people that play a sport for their national teams or clubs. Example: If the article says Chinese athlete or People's republic of China, output CHN.
+Then: 2. Look for the country that the athlete is playing for. Please only return countries that are participating in an event. When you find a country, output as noc the three-letter International Olympic Committe acronym for that country.
 Next: 3: Look for any mention of mental health and synonyms. I would like one tag that is binary and another tag with the words mentioned. Example: mental_health_binary = 1, mental_health = anxiety.
-Finally: 4. Look for the discipline the athletes participate in. This is the most important tag.
+Then: 4. Look for the discipline the athletes participate in. This is the most important tag.
+Next: 5. Please extract the following topics and make them binary:
+         1. Blast from the past: please put 1 in this topic if the article talks about events from the past and 0 otherwise
+         2. Before they were stars: please put 1 in this topic if the article describes how athletes were like before they became famous and 0 otherwise
+         3. Classic finals: please put 1 in this topic if the article describes a final match between teams leading national teams or teams that were important in that period for that event and 0 otherwise
+         4. Incredible teams: please put 1 in this topic if the article describes a team that had to overcome obstacles during the preparation for an event or during the event and ended up winning and 0 otherwise
+         5. Live blog: please put 1 in this topic if the article is a live blog and 0 otherwise
+         6. First medal: please put 1 in this topic if the article talks about an athlete or a national team winning their first medal in that event or in general and 0 otherwise
+         7. Day in the life: please put 1 in this topic if the article talks about what an athlete does during a normal day, their routine, or a day in their life and 0 otherwise
 
-Next to each tag, please tell me how many times you saw that tag in the original article and not the summarization. For example, how many time was that NOC mentioned, how many times was that athlete mentioned, etc.
+Next to each tag, please output a number informing me how many times you saw that tag being mentioned in the original article and not the summarization. For example, how many time was that NOC mentioned, how many times was that athlete mentioned, etc. The athlete's first or last name could be missing but count it anyway. 
+Example: Ailing (Eileen) Gu: 3 mentions, Cassie Sharpe: 2 mentions, CHN: 3 mentions
 
-Finally, please tell me why you chose thos specific tags.
+
+Finally, please tell me why you chose those specific tags.
 Passage:
 {input}
 """
