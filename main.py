@@ -5,7 +5,7 @@ from langchain.chains.summarize import load_summarize_chain
 import os
 import openai
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain, SimpleSequentialChain
+from langchain.chains import LLMChain, SequentialChain
 from typing import Any, List
 from pydantic import BaseModel
 from langchain.chains.base import Chain
@@ -21,8 +21,7 @@ from langchain.output_parsers.openai_functions import (
 )
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.language_model import BaseLanguageModel
-
-#openai_api_key = ''
+import openai
 
 summarization_template = """You will be provided with an article text. Keep all athletes and names you find in the original article text.
 Text:
@@ -90,8 +89,8 @@ article_input = get_text()
 
 st.markdown("### The tags extracted from your article:")
 
-if article_input:
-    llm = OpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
+if article_input and openai_api_key:
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
 
     prompt_summarization = PromptTemplate.from_template(template=summarization_template)
     chain_sum = LLMChain(llm=llm, prompt=prompt_summarization)
@@ -100,7 +99,8 @@ if article_input:
     prompt_extraction = PromptTemplate.from_template(template=tag_extraction_template)
     chain_extr = LLMChain(llm=llm, prompt=prompt_extraction)
 
-    overall_chain = SimpleSequentialChain(chains=[chain_sum, chain_trans, chain_extr], verbose=True)
+    overall_chain = SequentialChain(chains=[chain_sum, chain_trans, chain_extr], verbose=True)
     output = overall_chain.run(article_input)
     
     st.write(output)
+
