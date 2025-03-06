@@ -93,7 +93,7 @@ article_input = get_text()
 st.markdown("### The tags extracted from your article:")
 
 if article_input:
-    llm = OpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
+    llm = ChatOpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
 
     prompt_summarization = PromptTemplate(input_variables=["input"], template=summarization_template)
     chain_sum = LLMChain(llm=llm, prompt=prompt_summarization)
@@ -103,6 +103,6 @@ if article_input:
     chain_extr = LLMChain(llm=llm, prompt=prompt_extraction)
 
     overall_chain = SimpleSequentialChain(chains=[chain_sum, chain_trans, chain_extr], verbose=True)
-    output = overall_chain.run({"input": article_input})
-    
+    output = overall_chain.run({article_input})
+
     st.write(output)
