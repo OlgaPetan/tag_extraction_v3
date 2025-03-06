@@ -5,7 +5,7 @@ from langchain.chains.summarize import load_summarize_chain
 import os
 import openai
 from langchain.chat_models import ChatOpenAI
-from langchain.chains import LLMChain, SequentialChain
+from langchain.chains import LLMChain, SimpleSequentialChain
 from typing import Any, List
 from pydantic import BaseModel
 from langchain.chains.base import Chain
@@ -21,7 +21,10 @@ from langchain.output_parsers.openai_functions import (
 )
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.language_model import BaseLanguageModel
-import openai
+
+
+
+#openai_api_key = ''
 
 summarization_template = """You will be provided with an article text. Keep all athletes and names you find in the original article text.
 Text:
@@ -89,16 +92,17 @@ article_input = get_text()
 
 st.markdown("### The tags extracted from your article:")
 
-if article_input and openai_api_key:
-    llm = ChatOpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
+if article_input:
+    llm = OpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
 
-    chain_sum = LLMChain(llm=llm, prompt=summarization_template)
-    chain_trans = LLMChain(llm=llm, prompt=translation_template)
-    chain_extr = LLMChain(llm=llm, prompt=tag_extraction_template)
+    prompt_summarization = PromptTemplate(input_variables=["input"], template=summarization_template)
+    chain_sum = LLMChain(llm=llm, prompt=prompt_summarization)
+    prompt_translation = PromptTemplate(input_variables=["input"], template=translation_template)
+    chain_trans = LLMChain(llm=llm, prompt=prompt_translation)
+    prompt_extraction = PromptTemplate(input_variables=["input"], template=tag_extraction_template)
+    chain_extr = LLMChain(llm=llm, prompt=prompt_extraction)
 
-    overall_chain = SequentialChain(chains=[chain_sum, chain_trans, chain_extr], verbose=True)
-    
+    overall_chain = SimpleSequentialChain(chains=[chain_sum, chain_trans, chain_extr], verbose=True)
     output = overall_chain.run({"input": article_input})
     
     st.write(output)
-
