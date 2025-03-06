@@ -92,15 +92,13 @@ st.markdown("### The tags extracted from your article:")
 if article_input and openai_api_key:
     llm = ChatOpenAI(model_name="gpt-3.5-turbo-0613", temperature=0.2, openai_api_key=openai_api_key)
 
-    prompt_summarization = PromptTemplate.from_template(template=summarization_template)
-    chain_sum = LLMChain(llm=llm, prompt=prompt_summarization)
-    prompt_translation = PromptTemplate.from_template(template=translation_template)
-    chain_trans = LLMChain(llm=llm, prompt=prompt_translation)
-    prompt_extraction = PromptTemplate.from_template(template=tag_extraction_template)
-    chain_extr = LLMChain(llm=llm, prompt=prompt_extraction)
+    chain_sum = LLMChain(llm=llm, prompt=summarization_template)
+    chain_trans = LLMChain(llm=llm, prompt=translation_template)
+    chain_extr = LLMChain(llm=llm, prompt=tag_extraction_template)
 
     overall_chain = SequentialChain(chains=[chain_sum, chain_trans, chain_extr], verbose=True)
-    output = overall_chain.run(article_input)
+    
+    output = overall_chain.run({"input": article_input})
     
     st.write(output)
 
