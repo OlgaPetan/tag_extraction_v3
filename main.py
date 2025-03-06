@@ -22,7 +22,7 @@ from langchain.output_parsers.openai_functions import (
 from langchain.prompts import ChatPromptTemplate
 from langchain.schema.language_model import BaseLanguageModel
 
-openai_api_key = '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'
+#openai_api_key = ''
 
 summarization_template = """You will be provided with an article text. Keep all athletes and names you find in the original article text.
 Text:
